@@ -5,6 +5,15 @@ import pickle
 import matplotlib.pyplot as plt
 import os
 
+try:
+    excel = win32com.client.Dispatch("Excel.Application")
+    version = excel.version
+    print("Excel version:", version)
+    excel_installed = True
+except:
+    excel_installed = False
+    print("There are no excel installed")
+
 # definition path for current catalog of script
 catalog_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -205,7 +214,7 @@ replace_func = lambda x: Q_max if x > Q_max else x
 df[target_column] = df[target_column].apply(replace_func)
 
 # option when user has not excel
-try:
+if excel_installed == True:
     import xlwings as xw
 
     # crate new one excel --> name book
@@ -216,7 +225,7 @@ try:
     # put df to cell A6 without header and index
     sheet1["A1"].options(header=True, index=False).value = df
 
-except ImportError:
+else:
     # none becouse I can use now xw in another part of code
     xw = None  # Definiowanie xw w bloku except
     # if user has not excel
